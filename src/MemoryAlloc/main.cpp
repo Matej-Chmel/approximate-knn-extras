@@ -15,16 +15,15 @@ void runMalloc(const size_t level, const size_t listCount, const size_t mMax) {
 	if(!linkLists)
 		throw std::runtime_error("Not enough memory for link lists.");
 
-	const auto maxLinks = (mMax + 1) * sizeof(unsigned int);
+	const auto maxLinks = (mMax + 1) * sizeof(unsigned int) * level;
 
 	for(size_t i = 0; i < listCount; i++) {
-		const auto len = maxLinks * level;
-		linkLists[i] = (char*)malloc(len);
+		linkLists[i] = (char*)malloc(maxLinks);
 
 		if(!linkLists[i])
 			throw std::runtime_error("Not enough memory for one link list.");
 
-		memset(linkLists[i], 0, len);
+		memset(linkLists[i], 0, maxLinks);
 	}
 
 	for(size_t i = 0; i < listCount; i++)
@@ -34,7 +33,7 @@ void runMalloc(const size_t level, const size_t listCount, const size_t mMax) {
 
 void runVector(const size_t level, const size_t listCount, const size_t mMax) {
 	std::vector<std::vector<unsigned int>> linkLists(listCount);
-	const auto maxLinks = (mMax + 1);
+	const auto maxLinks = (mMax + 1) * level;
 
 	for(auto& list : linkLists)
 		list.resize(maxLinks, 0);
@@ -121,6 +120,6 @@ public:
 };
 
 int main() {
-	Benchmark(5, 50000, 32).benchAll(10).print(std::cout);
+	Benchmark(5, 50000, 32).benchAll(100).print(std::cout);
 	return 0;
 }
