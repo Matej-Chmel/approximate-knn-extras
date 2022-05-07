@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Benchmark.hpp"
 
 namespace chm {
@@ -12,6 +13,23 @@ namespace chm {
 		splitTime(elapsedCopy, this->millis);
 		splitTime(elapsedCopy, this->micros);
 		this->nanos = elapsedCopy;
+	}
+
+	chr::nanoseconds Timer::getElapsed() const {
+		const auto timeEnd = chr::steady_clock::now();
+		return chr::duration_cast<chr::nanoseconds>(timeEnd - this->start);
+	}
+
+	Timer::Timer() : start(chr::steady_clock::now()) {}
+
+	int catchAllExceptions(const std::function<void()>& f) {
+		try {
+			f();
+		} catch(const std::exception& e) {
+			std::cerr << "[ERROR] " << e.what() << '\n';
+			return EXIT_FAILURE;
+		}
+		return EXIT_SUCCESS;
 	}
 
 	void checkNameNotEmpty(const std::string& className, const std::string& name) {

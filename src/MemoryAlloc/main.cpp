@@ -5,6 +5,13 @@
 
 namespace chm {
 	struct MemoryAllocArgs {
+		struct Result {
+			bool operator!=(const Result&) const {
+				throw std::runtime_error("MemoryAlloc project doesn't compare results.");
+				return false;
+			}
+		};
+
 		const size_t level;
 		const size_t maxElements;
 		const size_t mMax;
@@ -12,7 +19,7 @@ namespace chm {
 		MemoryAllocArgs(const size_t level, const size_t maxElements, const size_t mMax) : level(level), maxElements(maxElements), mMax(mMax) {}
 	};
 
-	void runMalloc(const MemoryAllocArgs& args) {
+	MemoryAllocArgs::Result runMalloc(const MemoryAllocArgs& args) {
 		auto linkLists = (char**)malloc(sizeof(void*) * args.maxElements);
 
 		if(!linkLists)
@@ -32,30 +39,29 @@ namespace chm {
 		for(size_t i = 0; i < args.maxElements; i++)
 			free(linkLists[i]);
 		free(linkLists);
+
+		return {};
 	}
 
-	void runVector(const MemoryAllocArgs& args) {
+	MemoryAllocArgs::Result runVector(const MemoryAllocArgs& args) {
 		std::vector<std::vector<unsigned int>> linkLists(args.maxElements);
 		const auto maxLinks = (args.mMax + 1) * args.level;
 
 		for(auto& list : linkLists)
 			list.resize(maxLinks, 0);
+
+		return {};
 	}
 }
 
 int main() {
 	using namespace chm;
 
-	try {
-		BenchmarkSuite<MemoryAllocArgs>(MemoryAllocArgs(5, 50000, 32), "Memory allocation test")
+	return catchAllExceptions([]() {
+		BenchmarkSuite<MemoryAllocArgs>(MemoryAllocArgs(5, 50000, 32), "Memory allocation benchmark")
 			.add(runMalloc, "malloc")
 			.add(runVector, "vector")
 			.repeat(100)
 			.print(std::cout, "\n\n");
-	} catch(const std::exception& e) {
-		std::cerr << "[ERROR] " << e.what() << '\n';
-		return EXIT_FAILURE;
-	}
-
-	return EXIT_SUCCESS;
+	});
 }
