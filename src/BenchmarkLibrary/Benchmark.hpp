@@ -22,36 +22,36 @@ namespace chm {
 		chr::nanoseconds nanos;
 	};
 
-	template<class T>
+	template<class Args>
 	class Benchmark {
 	public:
-		using Func = std::function<void(const T&)>;
+		using Func = std::function<void(const Args&)>;
 
 		Benchmark(const Func& func, const std::string& name);
 		void print(std::ostream& s) const;
-		void run(const T& args);
+		void run(const Args& args);
 
 	private:
 		bool benchmarked;
-		const std::function<void(const T&)> func;
+		const std::function<void(const Args&)> func;
 		chr::nanoseconds minTime;
 		const std::string name;
 
 		void setIfMinimal(const chr::nanoseconds& elapsed);
 	};
 
-	template<class T>
+	template<class Args>
 	class BenchmarkSuite {
 	public:
-		BenchmarkSuite<T> add(const typename Benchmark<T>::Func& func, const std::string& name);
-		BenchmarkSuite(const T& args, const std::string& name);
-		BenchmarkSuite<T> print(std::ostream& s) const;
-		BenchmarkSuite<T> print(std::ostream& s, const std::string& endStr) const;
-		BenchmarkSuite<T> repeat(const size_t r);
+		BenchmarkSuite<Args> add(const typename Benchmark<Args>::Func& func, const std::string& name);
+		BenchmarkSuite(const Args& args, const std::string& name);
+		BenchmarkSuite<Args> print(std::ostream& s) const;
+		BenchmarkSuite<Args> print(std::ostream& s, const std::string& endStr) const;
+		BenchmarkSuite<Args> repeat(const size_t r);
 
 	private:
-		const T args;
-		std::vector<Benchmark<T>> benchmarks;
+		const Args args;
+		std::vector<Benchmark<Args>> benchmarks;
 		const std::string name;
 
 		void checkNotEmpty() const;
@@ -59,17 +59,17 @@ namespace chm {
 
 	void checkNameNotEmpty(const std::string& className, const std::string& name);
 	std::ostream& operator<<(std::ostream& s, const SplitTime& time);
-	template<class T> std::ostream& operator<<(std::ostream& s, const Benchmark<T>& benchmark);
-	template<class T> std::ostream& operator<<(std::ostream& s, const BenchmarkSuite<T> suite);
+	template<class Args> std::ostream& operator<<(std::ostream& s, const Benchmark<Args>& benchmark);
+	template<class Args> std::ostream& operator<<(std::ostream& s, const BenchmarkSuite<Args> suite);
 	template<class T> void splitTime(chr::nanoseconds& elapsed, T& res);
 
-	template<class T>
-	inline Benchmark<T>::Benchmark(const Func& func, const std::string& name) : benchmarked(false), func(func), minTime(0), name(name) {
+	template<class Args>
+	inline Benchmark<Args>::Benchmark(const Func& func, const std::string& name) : benchmarked(false), func(func), minTime(0), name(name) {
 		checkNameNotEmpty("Benchmark", this->name);
 	}
 
-	template<class T>
-	inline void Benchmark<T>::print(std::ostream& s) const {
+	template<class Args>
+	inline void Benchmark<Args>::print(std::ostream& s) const {
 		if(!this->benchmarked) {
 			std::stringstream strStream;
 			strStream << "Benchmark \"" << this->name << "\" wasn't benchmarked yet.";
@@ -79,16 +79,16 @@ namespace chm {
 		s << "Minimum time of \"" << this->name << "\": " << SplitTime(this->minTime);
 	}
 
-	template<class T>
-	inline void Benchmark<T>::run(const T& args) {
+	template<class Args>
+	inline void Benchmark<Args>::run(const Args& args) {
 		const auto timeBegin = chr::steady_clock::now();
 		this->func(args);
 		const auto timeEnd = chr::steady_clock::now();
 		this->setIfMinimal(chr::duration_cast<chr::nanoseconds>(timeEnd - timeBegin));
 	}
 
-	template<class T>
-	inline void Benchmark<T>::setIfMinimal(const chr::nanoseconds& elapsed) {
+	template<class Args>
+	inline void Benchmark<Args>::setIfMinimal(const chr::nanoseconds& elapsed) {
 		if(!this->benchmarked) {
 			this->benchmarked = true;
 			this->minTime = elapsed;
@@ -96,19 +96,19 @@ namespace chm {
 			this->minTime = elapsed;
 	}
 
-	template<class T>
-	inline BenchmarkSuite<T> BenchmarkSuite<T>::add(const typename Benchmark<T>::Func& func, const std::string& name) {
+	template<class Args>
+	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::add(const typename Benchmark<Args>::Func& func, const std::string& name) {
 		this->benchmarks.emplace_back(func, name);
 		return *this;
 	}
 
-	template<class T>
-	inline BenchmarkSuite<T>::BenchmarkSuite(const T& args, const std::string& name) : args(args), name(name) {
+	template<class Args>
+	inline BenchmarkSuite<Args>::BenchmarkSuite(const Args& args, const std::string& name) : args(args), name(name) {
 		checkNameNotEmpty("BenchmarkSuite", this->name);
 	}
 
-	template<class T>
-	inline BenchmarkSuite<T> BenchmarkSuite<T>::print(std::ostream& s) const {
+	template<class Args>
+	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::print(std::ostream& s) const {
 		this->checkNotEmpty();
 
 		const auto lastIdx = this->benchmarks.size() - 1;
@@ -123,15 +123,15 @@ namespace chm {
 		return *this;
 	}
 
-	template<class T>
-	inline BenchmarkSuite<T> BenchmarkSuite<T>::print(std::ostream& s, const std::string& endStr) const {
-		BenchmarkSuite<T>::print(s);
+	template<class Args>
+	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::print(std::ostream& s, const std::string& endStr) const {
+		BenchmarkSuite<Args>::print(s);
 		s << endStr;
 		return *this;
 	}
 
-	template<class T>
-	inline BenchmarkSuite<T> BenchmarkSuite<T>::repeat(const size_t r) {
+	template<class Args>
+	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::repeat(const size_t r) {
 		this->checkNotEmpty();
 
 		for(size_t i = 0; i < r; i++)
@@ -141,8 +141,8 @@ namespace chm {
 		return *this;
 	}
 
-	template<class T>
-	inline void BenchmarkSuite<T>::checkNotEmpty() const {
+	template<class Args>
+	inline void BenchmarkSuite<Args>::checkNotEmpty() const {
 		if(this->benchmarks.empty()) {
 			std::stringstream strStream;
 			strStream << "No benchmarks to run for \"" << this->name << "\".";
@@ -150,14 +150,14 @@ namespace chm {
 		}
 	}
 
-	template<class T>
-	inline std::ostream& operator<<(std::ostream& s, const Benchmark<T>& benchmark) {
+	template<class Args>
+	inline std::ostream& operator<<(std::ostream& s, const Benchmark<Args>& benchmark) {
 		benchmark.print(s);
 		return s;
 	}
 
-	template<class T>
-	inline std::ostream& operator<<(std::ostream& s, const BenchmarkSuite<T> suite) {
+	template<class Args>
+	inline std::ostream& operator<<(std::ostream& s, const BenchmarkSuite<Args> suite) {
 		(void)suite.print(s);
 		return s;
 	}
