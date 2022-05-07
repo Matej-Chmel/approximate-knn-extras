@@ -1,125 +1,61 @@
-#include <chrono>
 #include <cstring>
-#include <functional>
 #include <iostream>
-#include <stdexcept>
 #include <stdlib.h>
-#include <vector>
-namespace chr = std::chrono;
+#include "BenchmarkLibrary/Benchmark.hpp"
 
-using RunFunc = std::function<void(const size_t, const size_t, const size_t)>;
+namespace chm {
+	struct MemoryAllocArgs {
+		const size_t level;
+		const size_t maxElements;
+		const size_t mMax;
 
-void runMalloc(const size_t level, const size_t listCount, const size_t mMax) {
-	auto linkLists = (char**)malloc(sizeof(void*) * listCount);
+		MemoryAllocArgs(const size_t level, const size_t maxElements, const size_t mMax) : level(level), maxElements(maxElements), mMax(mMax) {}
+	};
 
-	if(!linkLists)
-		throw std::runtime_error("Not enough memory for link lists.");
+	void runMalloc(const MemoryAllocArgs& args) {
+		auto linkLists = (char**)malloc(sizeof(void*) * args.maxElements);
 
-	const auto maxLinks = (mMax + 1) * sizeof(unsigned int) * level;
+		if(!linkLists)
+			throw std::runtime_error("Not enough memory for link lists.");
 
-	for(size_t i = 0; i < listCount; i++) {
-		linkLists[i] = (char*)malloc(maxLinks);
+		const auto maxLinks = (args.mMax + 1) * sizeof(unsigned int) * args.level;
 
-		if(!linkLists[i])
-			throw std::runtime_error("Not enough memory for one link list.");
+		for(size_t i = 0; i < args.maxElements; i++) {
+			linkLists[i] = (char*)malloc(maxLinks);
 
-		memset(linkLists[i], 0, maxLinks);
-	}
+			if(!linkLists[i])
+				throw std::runtime_error("Not enough memory for one link list.");
 
-	for(size_t i = 0; i < listCount; i++)
-		free(linkLists[i]);
-	free(linkLists);
-}
-
-void runVector(const size_t level, const size_t listCount, const size_t mMax) {
-	std::vector<std::vector<unsigned int>> linkLists(listCount);
-	const auto maxLinks = (mMax + 1) * level;
-
-	for(auto& list : linkLists)
-		list.resize(maxLinks, 0);
-}
-
-template<typename T>
-void splitTime(chr::nanoseconds& elapsed, T& res) {
-	res = chr::duration_cast<T>(elapsed);
-	elapsed -= res;
-}
-
-struct SplitTimePoint {
-	chr::seconds seconds;
-	chr::milliseconds millis;
-	chr::microseconds micros;
-	chr::nanoseconds nanos;
-
-	void print(std::ostream& s) const {
-		s << this->seconds.count() << '.' << this->millis.count() << '.' << this->micros.count() << '.' << this->nanos.count();
-	}
-
-	SplitTimePoint(const chr::nanoseconds& elapsed) {
-		chr::nanoseconds elapsedCopy = elapsed;
-
-		splitTime(elapsedCopy, this->seconds);
-		splitTime(elapsedCopy, this->millis);
-		splitTime(elapsedCopy, this->micros);
-		this->nanos = elapsedCopy;
-	}
-};
-
-std::ostream& operator<<(std::ostream& s, const SplitTimePoint& timePoint) {
-	timePoint.print(s);
-	return s;
-}
-
-class Benchmark {
-	bool benchmarkedMalloc;
-	bool benchmarkedVector;
-	const size_t level;
-	const size_t listCount;
-	chr::nanoseconds minMalloc;
-	chr::nanoseconds minVector;
-	const size_t mMax;
-
-	void benchRunFunc(bool& benchmarked, const RunFunc& f, chr::nanoseconds& minTime) {
-		const auto timeBegin = chr::steady_clock::now();
-		f(this->level, this->listCount, this->mMax);
-		const auto timeEnd = chr::steady_clock::now();
-		const auto elapsed = chr::duration_cast<chr::nanoseconds>(timeEnd - timeBegin);
-
-		if(!benchmarked) {
-			benchmarked = true;
-			minTime = elapsed;
-		} else if(elapsed < minTime)
-			minTime = elapsed;
-	}
-
-	void benchMalloc() {
-		this->benchRunFunc(this->benchmarkedMalloc, runMalloc, this->minMalloc);
-	}
-
-	void benchVector() {
-		this->benchRunFunc(this->benchmarkedVector, runVector, this->minVector);
-	}
-
-public:
-	Benchmark(const size_t level, const size_t listCount, const size_t mMax)
-		: benchmarkedMalloc(false), benchmarkedVector(false), level(level), listCount(listCount),
-		minMalloc(0), minVector(0), mMax(mMax) {
-	}
-
-	Benchmark& benchAll(const size_t repeats) {
-		for(size_t i = 0; i < repeats; i++) {
-			this->benchMalloc();
-			this->benchVector();
+			memset(linkLists[i], 0, maxLinks);
 		}
-		return *this;
+
+		for(size_t i = 0; i < args.maxElements; i++)
+			free(linkLists[i]);
+		free(linkLists);
 	}
 
-	void print(std::ostream& s) const {
-		s << "Minimum malloc time: " << SplitTimePoint(this->minMalloc) << "\nMinimum vector time: " << SplitTimePoint(this->minVector) << '\n';
+	void runVector(const MemoryAllocArgs& args) {
+		std::vector<std::vector<unsigned int>> linkLists(args.maxElements);
+		const auto maxLinks = (args.mMax + 1) * args.level;
+
+		for(auto& list : linkLists)
+			list.resize(maxLinks, 0);
 	}
-};
+}
 
 int main() {
-	Benchmark(5, 50000, 32).benchAll(100).print(std::cout);
-	return 0;
+	using namespace chm;
+
+	try {
+		BenchmarkSuite<MemoryAllocArgs>(MemoryAllocArgs(5, 50000, 32), "Memory allocation test")
+			.add(runMalloc, "malloc")
+			.add(runVector, "vector")
+			.repeat(100)
+			.print(std::cout, "\n\n");
+	} catch(const std::exception& e) {
+		std::cerr << "[ERROR] " << e.what() << '\n';
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
 }
