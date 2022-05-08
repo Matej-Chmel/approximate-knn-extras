@@ -18,12 +18,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="memoryAlloc.cpp">
+    <ClCompile Include="visitedArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="memoryAlloc.hpp">
+    <ClInclude Include="visitedArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

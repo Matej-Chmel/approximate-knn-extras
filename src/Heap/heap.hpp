@@ -24,17 +24,20 @@ namespace chm {
 		}
 	};
 
-	struct HeapArgs {
-		class Result {
-		public:
-			void add(const Node& n);
-			bool operator!=(const Result& o) const;
-			Result(const size_t maxLen);
-			Result(const std::vector<Node>& nodes);
+	class HeapResult {
+	public:
+		void add(const Node& n);
+		bool operator!=(const HeapResult& o) const;
+		HeapResult() = default;
+		HeapResult(const size_t maxLen);
+		HeapResult(const std::vector<Node>& nodes);
 
-		private:
-			std::vector<Node> nodes;
-		};
+	private:
+		std::vector<Node> nodes;
+	};
+
+	struct HeapArgs {
+		using Result = HeapResult;
 
 		const std::vector<Node> nodes;
 

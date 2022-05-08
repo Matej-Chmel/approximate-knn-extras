@@ -13,8 +13,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{52caec93-ed5b-4fc0-90fd-650b71c4d932}</ProjectGuid>
-    <RootNamespace>MemoryAlloc</RootNamespace>
+    <ProjectGuid>{a49f6f01-cfaf-4078-8a88-a50857046df6}</ProjectGuid>
+    <RootNamespace>VisitedArray</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -77,7 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="memoryAlloc.cpp" />
+    <ClCompile Include="visitedArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkLibrary\BenchmarkLibrary.vcxproj">
@@ -85,7 +85,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="memoryAlloc.hpp" />
+    <ClInclude Include="visitedArray.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,5 @@
 #include <random>
+#include <sstream>
 #include "heap.hpp"
 
 namespace chm {
@@ -8,11 +9,11 @@ namespace chm {
 		return this->distance != o.distance;
 	}
 
-	void HeapArgs::Result::add(const Node& n) {
+	void HeapResult::add(const Node& n) {
 		this->nodes.emplace_back(n.distance, n.id);
 	}
 
-	bool HeapArgs::Result::operator!=(const Result& o) const {
+	bool HeapResult::operator!=(const HeapResult& o) const {
 		if(this->nodes.size() != o.nodes.size())
 			return true;
 
@@ -24,16 +25,16 @@ namespace chm {
 		return false;
 	}
 
-	HeapArgs::Result::Result(const size_t maxLen) {
+	HeapResult::HeapResult(const size_t maxLen) {
 		this->nodes.reserve(maxLen);
 	}
 
-	HeapArgs::Result::Result(const std::vector<Node>& nodes) : nodes(nodes) {
+	HeapResult::HeapResult(const std::vector<Node>& nodes) : nodes(nodes) {
 		std::sort(this->nodes.begin(), this->nodes.end(), SortComparator());
 	}
 
-	HeapArgs::Result HeapArgs::getCorrectRes() const {
-		return HeapArgs::Result(this->nodes);
+	HeapResult HeapArgs::getCorrectRes() const {
+		return HeapResult(this->nodes);
 	}
 
 	size_t HeapArgs::getNodeCount() const {
@@ -43,6 +44,12 @@ namespace chm {
 	HeapArgs::HeapArgs(const std::vector<Node>& nodes) : nodes(nodes) {}
 
 	std::vector<Node> generateNodes(const unsigned int count, const float minDist, const float maxDist, const unsigned int seed) {
+		if(minDist > maxDist) {
+			std::stringstream s;
+			s << "Minimum distance (" << minDist << ") can't be greater than maximum distance (" << maxDist << ").";
+			throw std::runtime_error(s.str());
+		}
+
 		std::uniform_real_distribution<float> dist(minDist, maxDist);
 		std::default_random_engine gen(seed);
 		std::vector<Node> res;
