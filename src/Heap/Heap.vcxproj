@@ -38,13 +38,13 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\src\props\C++17.props" />
-    <Import Project="..\src\props\Include src.props" />
+    <Import Project="..\props\C++17.props" />
+    <Import Project="..\props\Include src.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\src\props\C++17.props" />
-    <Import Project="..\src\props\Include src.props" />
+    <Import Project="..\props\C++17.props" />
+    <Import Project="..\props\Include src.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -83,7 +83,7 @@
     <ClInclude Include="heap.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\BenchmarkLibrary\BenchmarkLibrary.vcxproj">
+    <ProjectReference Include="..\BenchmarkLibrary\BenchmarkLibrary.vcxproj">
       <Project>{27cf3e17-bf5a-4472-8a98-2402db5b4be4}</Project>
     </ProjectReference>
   </ItemGroup>
