@@ -62,8 +62,7 @@ namespace chm {
 		}
 
 		while(!heap.empty()) {
-			const auto& n = heap.front();
-			res.add(n);
+			res.add(heap.front());
 			std::pop_heap(heap.begin(), heap.end(), NearHeapComparator());
 			heap.pop_back();
 		}

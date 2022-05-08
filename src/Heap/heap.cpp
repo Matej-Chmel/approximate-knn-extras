@@ -62,8 +62,7 @@ namespace chm {
 			queue.emplace(n.distance, n.id);
 
 		while(!queue.empty()) {
-			const auto& n = queue.top();
-			res.add(n);
+			res.add(queue.top());
 			queue.pop();
 		}
 
