@@ -1,15 +1,9 @@
 #include <cstring>
 #include <stdexcept>
 #include <stdlib.h>
-#include <vector>
 #include "memoryAlloc.hpp"
 
 namespace chm {
-	bool MemoryAllocResult::operator!=(const MemoryAllocResult&) const {
-		throw std::runtime_error("MemoryAlloc project doesn't compare results.");
-		return false;
-	}
-
 	MemoryAllocArgs::MemoryAllocArgs(const size_t level, const size_t maxElements, const size_t mMax)
 		: level(level), maxElements(maxElements), mMax(mMax) {}
 

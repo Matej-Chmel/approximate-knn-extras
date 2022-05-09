@@ -1,9 +1,8 @@
 #pragma once
-#include <vector>
+#include "BenchmarkLibrary/Result.hpp"
+#include "DataGeneratorLibrary/dataGenerator.hpp"
 
 namespace chm {
-	using uint = unsigned int;
-
 	struct VisitedArrayTask {
 		std::vector<uint> elements;
 		std::vector<uint> queries;
@@ -11,16 +10,11 @@ namespace chm {
 		VisitedArrayTask(const uint elementCount, const uint queryCount, const uint seed, const bool equalSeed = false);
 	};
 
-	class VisitedArrayResult {
+	class VisitedArrayResult : public VectorResult<uint> {
 	public:
-		void add(const uint i);
-		bool operator!=(const VisitedArrayResult& o) const;
 		VisitedArrayResult() = default;
 		VisitedArrayResult(const size_t queryCount);
 		VisitedArrayResult(const std::vector<uint>& elements, const std::vector<uint>& queries);
-
-	private:
-		std::vector<uint> answers;
 	};
 
 	struct VisitedArrayArgs {

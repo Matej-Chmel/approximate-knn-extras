@@ -1,12 +1,9 @@
 #pragma once
+#include "BenchmarkLibrary/Result.hpp"
 
 namespace chm {
-	struct MemoryAllocResult {
-		bool operator!=(const MemoryAllocResult&) const;
-	};
-
 	struct MemoryAllocArgs {
-		using Result = MemoryAllocResult;
+		using Result = UncomparableResult;
 
 		const size_t level;
 		const size_t maxElements;

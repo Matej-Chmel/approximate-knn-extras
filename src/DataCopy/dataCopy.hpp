@@ -1,16 +1,12 @@
 #pragma once
-#include <vector>
+#include "BenchmarkLibrary/Result.hpp"
 
 namespace chm {
-	class DataCopyResult {
+	class DataCopyResult : public VectorResult<float> {
 	public:
-		DataCopyResult(const size_t count, const size_t dim);
+		DataCopyResult() = default;
 		DataCopyResult(const std::vector<float>& data);
-		float* getData();
-		bool operator!=(const DataCopyResult& o) const;
-
-	private:
-		std::vector<float> data;
+		DataCopyResult(const size_t count, const size_t dim);
 	};
 
 	struct DataCopyArgs {

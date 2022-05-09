@@ -5,27 +5,9 @@
 #include "DataGeneratorLibrary/dataGenerator.hpp"
 
 namespace chm {
-	DataCopyResult::DataCopyResult(const size_t count, const size_t dim) {
-		this->data.resize(count * dim);
-	}
+	DataCopyResult::DataCopyResult(const std::vector<float>& data) : VectorResult<float>(data) {}
 
-	DataCopyResult::DataCopyResult(const std::vector<float>& data) : data(data) {}
-
-	float* DataCopyResult::getData() {
-		return this->data.data();
-	}
-
-	bool DataCopyResult::operator!=(const DataCopyResult& o) const {
-		if(this->data.size() != o.data.size())
-			return true;
-
-		const auto len = this->data.size();
-
-		for(size_t i = 0; i < len; i++)
-			if(this->data[i] != o.data[i])
-				return true;
-		return false;
-	}
+	DataCopyResult::DataCopyResult(const size_t count, const size_t dim) : VectorResult<float>(count* dim, false) {}
 
 	DataCopyArgs::DataCopyArgs(const size_t count, const size_t dim) : count(count), dim(dim) {
 		if(!count || !dim)
