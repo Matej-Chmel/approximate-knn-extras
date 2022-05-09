@@ -6,10 +6,12 @@ int main() {
 	using namespace chm;
 
 	return catchAllExceptions([]() {
-		BenchmarkSuite<>()
-			.add()
-			.add()
-			.repeat(1)
+		DataCopyArgs args(250000, 25);
+
+		BenchmarkSuite<DataCopyArgs>(args, args.getCorrectRes(), "Data copy benchmark")
+			.add(runStagedCopy, "staged copy")
+			.add(runCopyAtOnce, "copy at once")
+			.repeat(200)
 			.print(std::cout, "\n\n");
 	});
 }

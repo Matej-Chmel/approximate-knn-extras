@@ -83,6 +83,9 @@
     <ProjectReference Include="..\BenchmarkLibrary\BenchmarkLibrary.vcxproj">
       <Project>{27cf3e17-bf5a-4472-8a98-2402db5b4be4}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\DataGeneratorLibrary\DataGeneratorLibrary.vcxproj">
+      <Project>{3ad3654b-8b49-4987-9ac8-4f43f8055b17}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataCopy.hpp" />
