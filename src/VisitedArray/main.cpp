@@ -11,7 +11,7 @@ int main() {
 		BenchmarkSuite<VisitedArrayArgs>(args, args.getCorrectRes(), "Visited array benchmark")
 			.add(runVisitedArray<unsigned char>, "plain array")
 			.add(runVisitedArray<bool>, "bit array")
-			.repeat(100)
+			.repeat(2000)
 			.print(std::cout, "\n\n");
 
 		std::cout << "Size of plain array: " << args.getElementCount() * 8 <<

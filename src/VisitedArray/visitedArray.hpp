@@ -35,7 +35,6 @@ namespace chm {
 		VisitedArrayArgs(const VisitedArrayTask& t);
 	};
 
-	std::vector<uint> generateElements(const uint count, const uint minElem, const uint maxElem, const uint seed);
 	template<typename T> VisitedArrayArgs::Result runVisitedArray(const VisitedArrayArgs& args);
 
 	template<typename T>

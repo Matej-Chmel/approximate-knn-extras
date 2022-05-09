@@ -2,6 +2,7 @@
 #include <random>
 #include <sstream>
 #include <stdexcept>
+#include "DataGeneratorLibrary/dataGenerator.hpp"
 #include "visitedArray.hpp"
 
 namespace chm {
@@ -12,8 +13,8 @@ namespace chm {
 			throw std::runtime_error("There can't be zero queries.");
 
 		const auto maxElem = elementCount - 1;
-		this->elements = generateElements(elementCount, 0, maxElem, seed);
-		this->queries = generateElements(queryCount, 0, maxElem, equalSeed ? seed : seed + 1);
+		this->elements = generateData<unsigned int>(size_t(elementCount), 0, maxElem, seed);
+		this->queries = generateData<unsigned int>(size_t(queryCount), 0, maxElem, equalSeed ? seed : seed + 1);
 	}
 
 	void VisitedArrayResult::add(const uint i) {
@@ -58,22 +59,4 @@ namespace chm {
 	}
 
 	VisitedArrayArgs::VisitedArrayArgs(const VisitedArrayTask& t) : elements(t.elements), queries(t.queries) {}
-
-	std::vector<uint> generateElements(const uint count, const uint minElem, const uint maxElem, const uint seed) {
-		if(minElem > maxElem) {
-			std::stringstream s;
-			s << "Minimum (" << minElem << ") can't be greater than maximum (" << maxElem << ").";
-			throw std::runtime_error(s.str());
-		}
-
-		std::uniform_int_distribution<uint> dist(minElem, maxElem);
-		std::default_random_engine gen(seed);
-		std::vector<uint> res;
-		res.reserve(count);
-
-		for(uint i = 0; i < count; i++)
-			res.emplace_back(dist(gen));
-
-		return res;
-	}
 }

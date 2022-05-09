@@ -13,8 +13,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a49f6f01-cfaf-4078-8a88-a50857046df6}</ProjectGuid>
-    <RootNamespace>VisitedArray</RootNamespace>
+    <ProjectGuid>{a6533e5b-d8e2-4c73-b6e2-63ebbac90504}</ProjectGuid>
+    <RootNamespace>DataCopy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,19 +76,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dataCopy.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="visitedArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkLibrary\BenchmarkLibrary.vcxproj">
       <Project>{27cf3e17-bf5a-4472-8a98-2402db5b4be4}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\DataGeneratorLibrary\DataGeneratorLibrary.vcxproj">
-      <Project>{3ad3654b-8b49-4987-9ac8-4f43f8055b17}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="visitedArray.hpp" />
+    <ClInclude Include="dataCopy.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

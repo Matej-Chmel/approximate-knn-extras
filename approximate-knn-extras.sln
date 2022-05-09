@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BenchmarkLibrary", "src\Ben
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisitedArray", "src\VisitedArray\VisitedArray.vcxproj", "{A49F6F01-CFAF-4078-8A88-A50857046DF6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataCopy", "src\DataCopy\DataCopy.vcxproj", "{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataGeneratorLibrary", "src\DataGeneratorLibrary\DataGeneratorLibrary.vcxproj", "{3AD3654B-8B49-4987-9AC8-4F43F8055B17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -49,6 +53,18 @@ Global
 		{A49F6F01-CFAF-4078-8A88-A50857046DF6}.Release|x64.ActiveCfg = Release|x64
 		{A49F6F01-CFAF-4078-8A88-A50857046DF6}.Release|x64.Build.0 = Release|x64
 		{A49F6F01-CFAF-4078-8A88-A50857046DF6}.Release|x86.ActiveCfg = Release|x64
+		{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}.Debug|x64.ActiveCfg = Debug|x64
+		{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}.Debug|x64.Build.0 = Debug|x64
+		{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}.Debug|x86.ActiveCfg = Debug|x64
+		{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}.Release|x64.ActiveCfg = Release|x64
+		{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}.Release|x64.Build.0 = Release|x64
+		{A6533E5B-D8E2-4C73-B6E2-63EBBAC90504}.Release|x86.ActiveCfg = Release|x64
+		{3AD3654B-8B49-4987-9AC8-4F43F8055B17}.Debug|x64.ActiveCfg = Debug|x64
+		{3AD3654B-8B49-4987-9AC8-4F43F8055B17}.Debug|x64.Build.0 = Debug|x64
+		{3AD3654B-8B49-4987-9AC8-4F43F8055B17}.Debug|x86.ActiveCfg = Debug|x64
+		{3AD3654B-8B49-4987-9AC8-4F43F8055B17}.Release|x64.ActiveCfg = Release|x64
+		{3AD3654B-8B49-4987-9AC8-4F43F8055B17}.Release|x64.Build.0 = Release|x64
+		{3AD3654B-8B49-4987-9AC8-4F43F8055B17}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
