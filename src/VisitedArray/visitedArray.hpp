@@ -4,40 +4,38 @@
 
 namespace chm {
 	struct VisitedArrayTask {
-		std::vector<uint> elements;
+		std::vector<uint> items;
 		std::vector<uint> queries;
 
-		VisitedArrayTask(const uint elementCount, const uint queryCount, const uint seed, const bool equalSeed = false);
+		VisitedArrayTask(const uint itemCount, const uint queryCount, const uint seed, const bool equalSeed = false);
 	};
 
 	class VisitedArrayResult : public VectorResult<VisitedArrayResult, uint> {
 	public:
 		VisitedArrayResult() = default;
 		VisitedArrayResult(const size_t queryCount);
-		VisitedArrayResult(const std::vector<uint>& elements, const std::vector<uint>& queries);
+		VisitedArrayResult(const std::vector<uint>& items, const std::vector<uint>& queries);
 	};
 
-	struct VisitedArrayArgs : public NoSetupArgs {
-		using Result = VisitedArrayResult;
-
-		const std::vector<uint> elements;
+	struct VisitedArrayArgs : public NoSetupArgs, public VectorArgs<uint, VisitedArrayResult> {
 		const std::vector<uint> queries;
 
 		Result::Opt getCorrectRes() const;
-		size_t getElementCount() const;
 		size_t getQueryCount() const;
 		VisitedArrayArgs(const VisitedArrayTask& t);
 	};
 
 	template<typename T> VisitedArrayArgs::Result::Opt runVisitedArray(const VisitedArrayArgs& args);
+	void throwZeroItems(const std::string& items);
 
 	template<typename T>
 	inline VisitedArrayArgs::Result::Opt runVisitedArray(const VisitedArrayArgs& args) {
-		std::vector<T> visited;
-		visited.resize(args.getElementCount(), T(0));
+		const auto& items = args.getVectorRef();
 		auto res = std::make_optional<VisitedArrayArgs::Result>(args.getQueryCount());
+		std::vector<T> visited;
+		visited.resize(args.getItemCount(), T(0));
 
-		for(const auto& e : args.elements)
+		for(const auto& e : items)
 			visited[e] = T(1);
 		for(const auto& q : args.queries)
 			res->add(uint(visited[q]));

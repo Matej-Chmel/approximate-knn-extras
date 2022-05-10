@@ -14,7 +14,7 @@ int main() {
 			.repeat(2000)
 			.print(std::cout, "\n\n");
 
-		std::cout << "Size of plain array: " << args.getElementCount() * 8 <<
-			" bits\nSize of bit array: " << args.getElementCount() << " bits.\n";
+		std::cout << "Size of plain array: " << args.getItemCount() * 8 <<
+			" bits\nSize of bit array: " << args.getItemCount() << " bits.\n";
 	});
 }

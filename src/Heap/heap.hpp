@@ -13,13 +13,7 @@ namespace chm {
 		HeapResult(const std::vector<Node>& nodes);
 	};
 
-	struct HeapArgs : public NoSetupArgs {
-		using Result = HeapResult;
-
-		const std::vector<Node> nodes;
-
-		Result::Opt getCorrectRes() const;
-		size_t getNodeCount() const;
+	struct HeapArgs : public NoSetupArgs, public VectorArgs<Node, HeapResult> {
 		HeapArgs(const std::vector<Node>& nodes);
 	};
 
@@ -29,13 +23,14 @@ namespace chm {
 	template<bool reserveMemory>
 	inline HeapArgs::Result::Opt runPushPopHeap(const HeapArgs& args) {
 		std::vector<Node> heap;
-		const auto nodeCount = args.getNodeCount();
+		const auto nodeCount = args.getItemCount();
+		const auto& nodes = args.getVectorRef();
 		auto res = std::make_optional<HeapArgs::Result>(nodeCount);
 
 		if constexpr(reserveMemory)
 			heap.reserve(nodeCount);
 
-		for(const auto& n : args.nodes) {
+		for(const auto& n : nodes) {
 			heap.emplace_back(n.distance, n.id);
 			std::push_heap(heap.begin(), heap.end(), NearHeapComparator());
 		}

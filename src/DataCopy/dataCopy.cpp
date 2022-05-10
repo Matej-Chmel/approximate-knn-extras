@@ -5,7 +5,7 @@
 #include "DataGeneratorLibrary/dataGenerator.hpp"
 
 namespace chm {
-	DataCopyResult::DataCopyResult(const std::vector<float>& data) : VectorResult<DataCopyResult, float>(data) {}
+	DataCopyResult::DataCopyResult(const std::vector<float>& items) : VectorResult<DataCopyResult, float>(items) {}
 
 	DataCopyResult::DataCopyResult(const size_t count, const size_t dim) : VectorResult<DataCopyResult, float>(count* dim, false) {}
 
@@ -13,15 +13,7 @@ namespace chm {
 		if(!count || !dim)
 			throw std::runtime_error("DataCopyArgs can't have empty data vector.");
 
-		this->data = generateData<float>(count * dim, -1000000.f, 1000000.f, 100);
-	}
-
-	DataCopyArgs::Result::Opt DataCopyArgs::getCorrectRes() const {
-		return std::make_optional<DataCopyArgs::Result>(this->data);
-	}
-
-	const float* const DataCopyArgs::getData() const {
-		return this->data.data();
+		this->items = generateData<float>(count * dim, -1000000.f, 1000000.f, 100);
 	}
 
 	DataCopyArgs::Result::Opt runCopyAtOnce(const DataCopyArgs& args) {

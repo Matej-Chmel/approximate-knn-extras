@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include <sstream>
 #include "Result.hpp"
 
 namespace chm {
@@ -7,5 +7,13 @@ namespace chm {
 		return true;
 	}
 
-	void NoSetupArgs::setup(const SetupTask&) {}
+	void NoSetupArgs::setup(const SetupTask&) {
+		throwNotImplemented("NoSetupArgs", "setup");
+	}
+
+	void throwNotImplemented(const std::string& className, const std::string& methodName) {
+		std::stringstream s;
+		s << "Method \"" << className << "::" << methodName << "\" not implemented.";
+		throw std::runtime_error(s.str());
+	}
 }
