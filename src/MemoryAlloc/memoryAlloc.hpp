@@ -2,9 +2,7 @@
 #include "BenchmarkLibrary/Result.hpp"
 
 namespace chm {
-	struct MemoryAllocArgs {
-		using Result = UncomparableResult;
-
+	struct MemoryAllocArgs : public UncomparableArgs {
 		const size_t level;
 		const size_t maxElements;
 		const size_t mMax;
@@ -12,6 +10,6 @@ namespace chm {
 		MemoryAllocArgs(const size_t level, const size_t maxElements, const size_t mMax);
 	};
 
-	MemoryAllocArgs::Result runMalloc(const MemoryAllocArgs& args);
-	MemoryAllocArgs::Result runVector(const MemoryAllocArgs& args);
+	MemoryAllocArgs::Result::Opt runMalloc(const MemoryAllocArgs& args);
+	MemoryAllocArgs::Result::Opt runVector(const MemoryAllocArgs& args);
 }

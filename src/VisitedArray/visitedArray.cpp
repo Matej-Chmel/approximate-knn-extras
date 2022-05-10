@@ -14,10 +14,10 @@ namespace chm {
 		this->queries = generateData<uint>(size_t(queryCount), 0, maxElem, equalSeed ? seed : seed + 1);
 	}
 
-	VisitedArrayResult::VisitedArrayResult(const size_t queryCount) : VectorResult<uint>(queryCount) {}
+	VisitedArrayResult::VisitedArrayResult(const size_t queryCount) : VectorResult<VisitedArrayResult, uint>(queryCount) {}
 
 	VisitedArrayResult::VisitedArrayResult(const std::vector<uint>& elements, const std::vector<uint>& queries)
-		: VectorResult<uint>(queries.size()) {
+		: VectorResult<VisitedArrayResult, uint>(queries.size()) {
 
 		std::vector<uint> elementsCopy(elements);
 		std::sort(elementsCopy.begin(), elementsCopy.end());
@@ -26,8 +26,8 @@ namespace chm {
 			this->data.emplace_back((uint)(std::binary_search(elementsCopy.begin(), elementsCopy.end(), q)));
 	}
 
-	VisitedArrayArgs::Result VisitedArrayArgs::getCorrectRes() const {
-		return VisitedArrayArgs::Result(this->elements, this->queries);
+	VisitedArrayArgs::Result::Opt VisitedArrayArgs::getCorrectRes() const {
+		return std::make_optional<VisitedArrayArgs::Result>(this->elements, this->queries);
 	}
 
 	size_t VisitedArrayArgs::getElementCount() const {

@@ -6,4 +6,6 @@ namespace chm {
 		throw std::runtime_error("Objects of class \"UncomparableResult\" can't be compared.");
 		return true;
 	}
+
+	void NoSetupArgs::setup(const SetupTask&) {}
 }

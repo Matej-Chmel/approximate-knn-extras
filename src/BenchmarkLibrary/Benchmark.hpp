@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include <functional>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -34,37 +35,40 @@ namespace chm {
 	template<class Args>
 	class Benchmark {
 	public:
-		using Func = std::function<typename Args::Result(const Args&)>;
+		using Result = std::optional<typename Args::Result>;
+		using Func = std::function<Result(const Args&)>;
+		using SetupTask = std::optional<typename Args::SetupTask>;
 
-		Benchmark(const Func& func, const std::string& name);
+		Benchmark(const Func& func, const std::string& name, const SetupTask& setupTask = std::nullopt);
 		void print(std::ostream& s) const;
-		void run(const Args& args, const bool compareRes, const typename Args::Result& expectedRes);
+		void run(Args& args, const Result& expectedRes);
 
 	private:
-		bool benchmarked;
 		const Func func;
-		chr::nanoseconds minTime;
+		std::optional<chr::nanoseconds> minTime;
 		const std::string name;
+		const SetupTask setupTask;
 
-		void checkResults(const typename Args::Result& actual, const typename Args::Result& expected) const;
+		void checkResults(const Result& actual, const Result& expected) const;
 		void setIfMinimal(const chr::nanoseconds& elapsed);
 	};
 
 	template<class Args>
 	class BenchmarkSuite {
 	public:
-		BenchmarkSuite<Args> add(const typename Benchmark<Args>::Func& func, const std::string& name);
-		BenchmarkSuite(const Args& args, const std::string& name);
-		BenchmarkSuite(const Args& args, const typename Args::Result& correctRes, const std::string& name);
-		BenchmarkSuite<Args> print(std::ostream& s) const;
-		BenchmarkSuite<Args> print(std::ostream& s, const std::string& endStr) const;
+		using Func = typename Benchmark<Args>::Func;
+		using Result = typename Benchmark<Args>::Result;
+		using SetupTask = typename Benchmark<Args>::SetupTask;
+
+		BenchmarkSuite<Args> add(const Func& func, const std::string& name, const SetupTask& setupTask = std::nullopt);
+		BenchmarkSuite(Args args, const std::string& name, const Result& correctRes = std::nullopt);
+		BenchmarkSuite<Args> print(std::ostream& s, const std::optional<std::string>& endStr = std::nullopt) const;
 		BenchmarkSuite<Args> repeat(const size_t r);
 
 	private:
-		const Args args;
+		Args args;
 		std::vector<Benchmark<Args>> benchmarks;
-		const bool compareRes;
-		const typename Args::Result correctRes;
+		const Result correctRes;
 		chr::nanoseconds elapsedTotal;
 		const std::string name;
 
@@ -79,34 +83,38 @@ namespace chm {
 	template<class T> void splitTime(chr::nanoseconds& elapsed, T& res);
 
 	template<class Args>
-	inline Benchmark<Args>::Benchmark(const Func& func, const std::string& name) : benchmarked(false), func(func), minTime(0), name(name) {
+	inline Benchmark<Args>::Benchmark(const Func& func, const std::string& name, const SetupTask& setupTask)
+		: func(func), minTime(std::nullopt), name(name), setupTask(setupTask) {
+
 		checkNameNotEmpty("Benchmark", this->name);
 	}
 
 	template<class Args>
 	inline void Benchmark<Args>::print(std::ostream& s) const {
-		if(!this->benchmarked) {
+		if(!this->minTime) {
 			std::stringstream strStream;
 			strStream << "Benchmark \"" << this->name << "\" wasn't benchmarked yet.";
 			throw std::runtime_error(strStream.str());
 		}
 
-		s << "Minimum time of \"" << this->name << "\": " << SplitTime(this->minTime);
+		s << "Minimum time of \"" << this->name << "\": " << SplitTime(*this->minTime);
 	}
 
 	template<class Args>
-	inline void Benchmark<Args>::run(const Args& args, const bool compareRes, const typename Args::Result& expectedRes) {
+	inline void Benchmark<Args>::run(Args& args, const Result& expectedRes) {
+		if(this->setupTask)
+			args.setup(*this->setupTask);
+
 		Timer timer{};
 		const auto actualRes = this->func(args);
 		const auto elapsed = timer.getElapsed();
 
-		if(compareRes)
-			this->checkResults(actualRes, expectedRes);
+		this->checkResults(actualRes, expectedRes);
 		this->setIfMinimal(elapsed);
 	}
 
 	template<class Args>
-	inline void Benchmark<Args>::checkResults(const typename Args::Result& actual, const typename Args::Result& expected) const {
+	inline void Benchmark<Args>::checkResults(const Result& actual, const Result& expected) const {
 		if(actual != expected) {
 			std::stringstream s;
 			s << "Results mismatch for \"" << this->name << "\".";
@@ -116,35 +124,25 @@ namespace chm {
 
 	template<class Args>
 	inline void Benchmark<Args>::setIfMinimal(const chr::nanoseconds& elapsed) {
-		if(!this->benchmarked) {
-			this->benchmarked = true;
-			this->minTime = elapsed;
-		} else if(elapsed < this->minTime)
+		if(!this->minTime || elapsed < *this->minTime)
 			this->minTime = elapsed;
 	}
 
 	template<class Args>
-	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::add(const typename Benchmark<Args>::Func& func, const std::string& name) {
-		this->benchmarks.emplace_back(func, name);
+	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::add(const Func& func, const std::string& name, const SetupTask& setupTask) {
+		this->benchmarks.emplace_back(func, name, setupTask);
 		return *this;
 	}
 
 	template<class Args>
-	inline BenchmarkSuite<Args>::BenchmarkSuite(const Args& args, const std::string& name)
-		: args(args), compareRes(false), correctRes{}, elapsedTotal(0), name(name) {
+	inline BenchmarkSuite<Args>::BenchmarkSuite(Args args, const std::string& name, const Result& correctRes)
+		: args(args), correctRes(correctRes), elapsedTotal(0), name(name) {
 
 		checkNameNotEmpty("BenchmarkSuite", this->name);
 	}
 
 	template<class Args>
-	inline BenchmarkSuite<Args>::BenchmarkSuite(const Args& args, const typename Args::Result& correctRes, const std::string& name)
-		: args(args), compareRes(true), correctRes(correctRes), elapsedTotal(0), name(name) {
-
-		checkNameNotEmpty("BenchmarkSuite", this->name);
-	}
-
-	template<class Args>
-	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::print(std::ostream& s) const {
+	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::print(std::ostream& s, const std::optional<std::string>& endStr) const {
 		this->checkNotEmpty();
 
 		const auto lastIdx = this->benchmarks.size() - 1;
@@ -156,13 +154,10 @@ namespace chm {
 		}
 
 		this->benchmarks[lastIdx].print(s);
-		return *this;
-	}
 
-	template<class Args>
-	inline BenchmarkSuite<Args> BenchmarkSuite<Args>::print(std::ostream& s, const std::string& endStr) const {
-		BenchmarkSuite<Args>::print(s);
-		s << endStr;
+		if(endStr)
+			s << *endStr;
+
 		return *this;
 	}
 
@@ -174,7 +169,7 @@ namespace chm {
 
 		for(size_t i = 0; i < r; i++)
 			for(auto& b : this->benchmarks)
-				b.run(this->args, this->compareRes, this->correctRes);
+				b.run(this->args, this->correctRes);
 
 		this->elapsedTotal += timer.getElapsed();
 		return *this;

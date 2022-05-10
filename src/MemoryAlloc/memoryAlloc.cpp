@@ -7,7 +7,7 @@ namespace chm {
 	MemoryAllocArgs::MemoryAllocArgs(const size_t level, const size_t maxElements, const size_t mMax)
 		: level(level), maxElements(maxElements), mMax(mMax) {}
 
-	MemoryAllocArgs::Result runMalloc(const MemoryAllocArgs& args) {
+	MemoryAllocArgs::Result::Opt runMalloc(const MemoryAllocArgs& args) {
 		auto linkLists = (char**)malloc(sizeof(void*) * args.maxElements);
 
 		if(!linkLists)
@@ -28,16 +28,16 @@ namespace chm {
 			free(linkLists[i]);
 		free(linkLists);
 
-		return {};
+		return std::nullopt;
 	}
 
-	MemoryAllocArgs::Result runVector(const MemoryAllocArgs& args) {
+	MemoryAllocArgs::Result::Opt runVector(const MemoryAllocArgs& args) {
 		std::vector<std::vector<unsigned int>> linkLists(args.maxElements);
 		const auto maxLinks = (args.mMax + 1) * args.level;
 
 		for(auto& list : linkLists)
 			list.resize(maxLinks, 0);
 
-		return {};
+		return std::nullopt;
 	}
 }

@@ -8,7 +8,7 @@ int main() {
 	return catchAllExceptions([]() {
 		DataCopyArgs args(250000, 25);
 
-		BenchmarkSuite<DataCopyArgs>(args, args.getCorrectRes(), "Data copy benchmark")
+		BenchmarkSuite<DataCopyArgs>(args, "Data copy benchmark", args.getCorrectRes())
 			.add(runStagedCopy, "staged copy")
 			.add(runCopyAtOnce, "copy at once")
 			.repeat(200)

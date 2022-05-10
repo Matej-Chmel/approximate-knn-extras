@@ -1,13 +1,29 @@
 #pragma once
+#include <optional>
 #include <vector>
 
 namespace chm {
-	struct UncomparableResult {
+	template<class Derived>
+	struct OptResult {
+		using Opt = std::optional<Derived>;
+	};
+
+	struct UncomparableResult : public OptResult<UncomparableResult> {
 		bool operator!=(const UncomparableResult& o) const;
 	};
 
-	template<typename T>
-	class VectorResult {
+	struct NoSetupArgs {
+		using SetupTask = std::nullptr_t;
+
+		void setup(const SetupTask&);
+	};
+
+	struct UncomparableArgs : public NoSetupArgs {
+		using Result = UncomparableResult;
+	};
+
+	template<class Derived, typename T>
+	class VectorResult : public OptResult<Derived> {
 	public:
 		void add(const T& t);
 		T* getData();
@@ -20,18 +36,18 @@ namespace chm {
 		std::vector<T> data;
 	};
 
-	template<typename T>
-	inline void VectorResult<T>::add(const T& t) {
+	template<class Derived, typename T>
+	inline void VectorResult<Derived, T>::add(const T& t) {
 		this->data.push_back(t);
 	}
 
-	template<typename T>
-	inline T* VectorResult<T>::getData() {
+	template<class Derived, typename T>
+	inline T* VectorResult<Derived, T>::getData() {
 		return this->data.data();
 	}
 
-	template<typename T>
-	inline bool VectorResult<T>::operator!=(const VectorResult& o) const {
+	template<class Derived, typename T>
+	inline bool VectorResult<Derived, T>::operator!=(const VectorResult& o) const {
 		const auto len = this->data.size();
 
 		if(len != o.data.size())
@@ -43,14 +59,14 @@ namespace chm {
 		return false;
 	}
 
-	template<typename T>
-	inline VectorResult<T>::VectorResult(const size_t maxCount, const bool reserveMemory) {
+	template<class Derived, typename T>
+	inline VectorResult<Derived, T>::VectorResult(const size_t maxCount, const bool reserveMemory) {
 		if(reserveMemory)
 			this->data.reserve(maxCount);
 		else
 			this->data.resize(maxCount);
 	}
 
-	template<typename T>
-	inline VectorResult<T>::VectorResult(const std::vector<T>& data) : data(data) {}
+	template<class Derived, typename T>
+	inline VectorResult<Derived, T>::VectorResult(const std::vector<T>& data) : data(data) {}
 }

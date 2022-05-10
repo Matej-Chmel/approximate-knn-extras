@@ -8,7 +8,7 @@ int main() {
 	return catchAllExceptions([]() {
 		HeapArgs args(generateNodes(500, 0.f, 5000.f, 10));
 
-		BenchmarkSuite<HeapArgs>(args, args.getCorrectRes(), "Heap implementation benchmark")
+		BenchmarkSuite<HeapArgs>(args, "Heap implementation benchmark", args.getCorrectRes())
 			.add(runPriorityQueue, "priority queue")
 			.add(runPushPopHeap<false>, "push-pop")
 			.add(runPushPopHeap<true>, "reserve-push-pop")

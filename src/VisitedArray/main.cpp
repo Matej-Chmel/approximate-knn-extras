@@ -8,7 +8,7 @@ int main() {
 	return catchAllExceptions([]() {
 		VisitedArrayArgs args(VisitedArrayTask(1000000, 10000, 50));
 
-		BenchmarkSuite<VisitedArrayArgs>(args, args.getCorrectRes(), "Visited array benchmark")
+		BenchmarkSuite<VisitedArrayArgs>(args, "Visited array benchmark", args.getCorrectRes())
 			.add(runVisitedArray<unsigned char>, "plain array")
 			.add(runVisitedArray<bool>, "bit array")
 			.repeat(2000)

@@ -10,37 +10,37 @@ namespace chm {
 		VisitedArrayTask(const uint elementCount, const uint queryCount, const uint seed, const bool equalSeed = false);
 	};
 
-	class VisitedArrayResult : public VectorResult<uint> {
+	class VisitedArrayResult : public VectorResult<VisitedArrayResult, uint> {
 	public:
 		VisitedArrayResult() = default;
 		VisitedArrayResult(const size_t queryCount);
 		VisitedArrayResult(const std::vector<uint>& elements, const std::vector<uint>& queries);
 	};
 
-	struct VisitedArrayArgs {
+	struct VisitedArrayArgs : public NoSetupArgs {
 		using Result = VisitedArrayResult;
 
 		const std::vector<uint> elements;
 		const std::vector<uint> queries;
 
-		Result getCorrectRes() const;
+		Result::Opt getCorrectRes() const;
 		size_t getElementCount() const;
 		size_t getQueryCount() const;
 		VisitedArrayArgs(const VisitedArrayTask& t);
 	};
 
-	template<typename T> VisitedArrayArgs::Result runVisitedArray(const VisitedArrayArgs& args);
+	template<typename T> VisitedArrayArgs::Result::Opt runVisitedArray(const VisitedArrayArgs& args);
 
 	template<typename T>
-	inline VisitedArrayArgs::Result runVisitedArray(const VisitedArrayArgs& args) {
+	inline VisitedArrayArgs::Result::Opt runVisitedArray(const VisitedArrayArgs& args) {
 		std::vector<T> visited;
 		visited.resize(args.getElementCount(), T(0));
-		VisitedArrayArgs::Result res(args.getQueryCount());
+		auto res = std::make_optional<VisitedArrayArgs::Result>(args.getQueryCount());
 
 		for(const auto& e : args.elements)
 			visited[e] = T(1);
 		for(const auto& q : args.queries)
-			res.add(uint(visited[q]));
+			res->add(uint(visited[q]));
 
 		return res;
 	}

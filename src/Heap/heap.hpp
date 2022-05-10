@@ -5,7 +5,7 @@
 #include "DataGeneratorLibrary/dataGenerator.hpp"
 
 namespace chm {
-	class HeapResult : public VectorResult<Node> {
+	class HeapResult : public VectorResult<HeapResult, Node> {
 	public:
 		void emplace(const Node& n);
 		HeapResult() = default;
@@ -13,24 +13,24 @@ namespace chm {
 		HeapResult(const std::vector<Node>& nodes);
 	};
 
-	struct HeapArgs {
+	struct HeapArgs : public NoSetupArgs {
 		using Result = HeapResult;
 
 		const std::vector<Node> nodes;
 
-		Result getCorrectRes() const;
+		Result::Opt getCorrectRes() const;
 		size_t getNodeCount() const;
 		HeapArgs(const std::vector<Node>& nodes);
 	};
 
-	HeapArgs::Result runPriorityQueue(const HeapArgs& args);
-	template<bool reserveMemory> HeapArgs::Result runPushPopHeap(const HeapArgs& args);
+	HeapArgs::Result::Opt runPriorityQueue(const HeapArgs& args);
+	template<bool reserveMemory> HeapArgs::Result::Opt runPushPopHeap(const HeapArgs& args);
 
 	template<bool reserveMemory>
-	inline HeapArgs::Result runPushPopHeap(const HeapArgs& args) {
+	inline HeapArgs::Result::Opt runPushPopHeap(const HeapArgs& args) {
 		std::vector<Node> heap;
 		const auto nodeCount = args.getNodeCount();
-		HeapArgs::Result res(nodeCount);
+		auto res = std::make_optional<HeapArgs::Result>(nodeCount);
 
 		if constexpr(reserveMemory)
 			heap.reserve(nodeCount);
@@ -41,7 +41,7 @@ namespace chm {
 		}
 
 		while(!heap.empty()) {
-			res.emplace(heap.front());
+			res->emplace(heap.front());
 			std::pop_heap(heap.begin(), heap.end(), NearHeapComparator());
 			heap.pop_back();
 		}
