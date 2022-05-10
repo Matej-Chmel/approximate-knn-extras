@@ -18,7 +18,7 @@
     <ClInclude Include="Benchmark.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Result.hpp">
+    <ClInclude Include="Args.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <ClCompile Include="Benchmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Result.cpp">
+    <ClCompile Include="Args.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

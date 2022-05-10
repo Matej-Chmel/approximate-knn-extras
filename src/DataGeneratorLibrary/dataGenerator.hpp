@@ -14,7 +14,7 @@ namespace chm {
 
 		Node();
 		Node(const float distance, const uint id);
-		bool operator!=(const Node& o) const;
+		bool operator==(const Node& o) const;
 	};
 
 	struct NearHeapComparator {

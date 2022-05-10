@@ -1,5 +1,5 @@
 #pragma once
-#include "BenchmarkLibrary/Result.hpp"
+#include "BenchmarkLibrary/Args.hpp"
 #include "DataGeneratorLibrary/dataGenerator.hpp"
 
 namespace chm {
@@ -17,7 +17,7 @@ namespace chm {
 		VisitedArrayResult(const std::vector<uint>& items, const std::vector<uint>& queries);
 	};
 
-	struct VisitedArrayArgs : public NoSetupArgs, public VectorArgs<uint, VisitedArrayResult> {
+	struct VisitedArrayArgs : public VectorNoSetupArgs<uint, VisitedArrayResult> {
 		const std::vector<uint> queries;
 
 		Result::Opt getCorrectRes() const;

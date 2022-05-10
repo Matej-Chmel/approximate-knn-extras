@@ -1,5 +1,5 @@
 #pragma once
-#include "BenchmarkLibrary/Result.hpp"
+#include "BenchmarkLibrary/Args.hpp"
 
 namespace chm {
 	struct DataCopyResult : public VectorResult<DataCopyResult, float> {
@@ -8,7 +8,7 @@ namespace chm {
 		DataCopyResult(const size_t count, const size_t dim);
 	};
 
-	struct DataCopyArgs : public NoSetupArgs, public VectorArgs<float, DataCopyResult> {
+	struct DataCopyArgs : public VectorNoSetupArgs<float, DataCopyResult> {
 		const size_t count;
 		const size_t dim;
 

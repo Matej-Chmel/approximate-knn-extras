@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <queue>
-#include "BenchmarkLibrary/Result.hpp"
+#include "BenchmarkLibrary/Args.hpp"
 #include "DataGeneratorLibrary/dataGenerator.hpp"
 
 namespace chm {
@@ -13,7 +13,7 @@ namespace chm {
 		HeapResult(const std::vector<Node>& nodes);
 	};
 
-	struct HeapArgs : public NoSetupArgs, public VectorArgs<Node, HeapResult> {
+	struct HeapArgs : public VectorNoSetupArgs<Node, HeapResult> {
 		HeapArgs(const std::vector<Node>& nodes);
 	};
 

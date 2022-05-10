@@ -36,7 +36,7 @@ namespace chm {
 	class Benchmark {
 	public:
 		using Result = std::optional<typename Args::Result>;
-		using Func = std::function<Result(const Args&)>;
+		using Func = std::function<Result(Args&)>;
 		using SetupTask = std::optional<typename Args::SetupTask>;
 
 		Benchmark(const Func& func, const std::string& name, const SetupTask& setupTask = std::nullopt);

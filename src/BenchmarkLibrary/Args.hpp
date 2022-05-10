@@ -5,6 +5,14 @@
 #include <vector>
 
 namespace chm {
+	template<typename ResultType, typename SetupTaskType>
+	struct BenchmarkArgs {
+		using Result = ResultType;
+		using SetupTask = SetupTaskType;
+
+		void setup(const SetupTask&);
+	};
+
 	template<class Derived>
 	struct OptResult {
 		using Opt = std::optional<Derived>;
@@ -14,22 +22,12 @@ namespace chm {
 		bool operator!=(const UncomparableResult& o) const;
 	};
 
-	struct NoSetupArgs {
-		using SetupTask = std::nullptr_t;
+	struct UncomparableArgs : public BenchmarkArgs<UncomparableResult, std::nullptr_t> {};
 
-		void setup(const SetupTask&);
-	};
-
-	struct UncomparableArgs : public NoSetupArgs {
-		using Result = UncomparableResult;
-	};
-
-	template<typename ItemType, typename ResultType>
-	class VectorArgs {
+	template<typename ItemType, typename ResultType, typename SetupTaskType>
+	class VectorArgs : public BenchmarkArgs<ResultType, SetupTaskType> {
 	public:
-		using Result = ResultType;
-
-		typename Result::Opt getCorrectRes() const;
+		typename VectorArgs<ItemType, ResultType, SetupTaskType>::Result::Opt getCorrectRes() const;
 		const ItemType* const getData() const;
 		const size_t getItemCount() const;
 		const std::vector<ItemType>& getVectorRef() const;
@@ -38,6 +36,12 @@ namespace chm {
 
 	protected:
 		std::vector<ItemType> items;
+	};
+
+	template<typename ItemType, typename ResultType>
+	struct VectorNoSetupArgs : public VectorArgs<ItemType, ResultType, std::nullptr_t> {
+		VectorNoSetupArgs() = default;
+		VectorNoSetupArgs(const std::vector<ItemType>& items);
 	};
 
 	template<class Derived, typename ItemType>
@@ -56,28 +60,39 @@ namespace chm {
 
 	void throwNotImplemented(const std::string& className, const std::string& methodName);
 
-	template<typename ItemType, typename ResultType>
-	inline typename VectorArgs<ItemType, ResultType>::Result::Opt VectorArgs<ItemType, ResultType>::getCorrectRes() const {
+	template<typename ResultType, typename SetupTaskType>
+	void BenchmarkArgs<ResultType, SetupTaskType>::setup(const SetupTask&) {
+		throwNotImplemented("BenchmarkArgs", "setup");
+	}
+
+	template<typename ItemType, typename ResultType, typename SetupTaskType>
+	inline typename VectorArgs<ItemType, ResultType, SetupTaskType>::Result::Opt VectorArgs<
+		ItemType, ResultType, SetupTaskType>::getCorrectRes() const {
+
 		return std::make_optional<ResultType>(this->items);
 	}
 
-	template<typename ItemType, typename ResultType>
-	inline const ItemType* const VectorArgs<ItemType, ResultType>::getData() const {
+	template<typename ItemType, typename ResultType, typename SetupTaskType>
+	inline const ItemType* const VectorArgs<ItemType, ResultType, SetupTaskType>::getData() const {
 		return this->items.data();
 	}
 
-	template<typename ItemType, typename ResultType>
-	inline const size_t VectorArgs<ItemType, ResultType>::getItemCount() const {
+	template<typename ItemType, typename ResultType, typename SetupTaskType>
+	inline const size_t VectorArgs<ItemType, ResultType, SetupTaskType>::getItemCount() const {
 		return this->items.size();
 	}
 
-	template<typename ItemType, typename ResultType>
-	inline const std::vector<ItemType>& VectorArgs<ItemType, ResultType>::getVectorRef() const {
+	template<typename ItemType, typename ResultType, typename SetupTaskType>
+	inline const std::vector<ItemType>& VectorArgs<ItemType, ResultType, SetupTaskType>::getVectorRef() const {
 		return this->items;
 	}
 
+	template<typename ItemType, typename ResultType, typename SetupTaskType>
+	inline VectorArgs<ItemType, ResultType, SetupTaskType>::VectorArgs(const std::vector<ItemType>& items) : items(items) {}
+
 	template<typename ItemType, typename ResultType>
-	inline VectorArgs<ItemType, ResultType>::VectorArgs(const std::vector<ItemType>& items) : items(items) {}
+	inline VectorNoSetupArgs<ItemType, ResultType>::VectorNoSetupArgs(const std::vector<ItemType>& items)
+		: VectorArgs<ItemType, ResultType, std::nullptr_t>(items) {}
 
 	template<class Derived, typename ItemType>
 	inline void VectorResult<Derived, ItemType>::add(const ItemType& i) {
@@ -91,15 +106,7 @@ namespace chm {
 
 	template<class Derived, typename ItemType>
 	inline bool VectorResult<Derived, ItemType>::operator!=(const VectorResult& o) const {
-		const auto len = this->items.size();
-
-		if(len != o.items.size())
-			return true;
-
-		for(size_t i = 0; i < len; i++)
-			if(this->items[i] != o.items[i])
-				return true;
-		return false;
+		return this->items != o.items;
 	}
 
 	template<class Derived, typename ItemType>

@@ -11,7 +11,7 @@ namespace chm {
 		std::sort(this->items.begin(), this->items.end(), SortComparator());
 	}
 
-	HeapArgs::HeapArgs(const std::vector<Node>& nodes) : VectorArgs<Node, HeapResult>(nodes) {}
+	HeapArgs::HeapArgs(const std::vector<Node>& nodes) : VectorNoSetupArgs<Node, HeapResult>(nodes) {}
 
 	HeapArgs::Result::Opt runPriorityQueue(const HeapArgs& args) {
 		const auto& nodes = args.getVectorRef();

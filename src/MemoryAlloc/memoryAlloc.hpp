@@ -1,5 +1,5 @@
 #pragma once
-#include "BenchmarkLibrary/Result.hpp"
+#include "BenchmarkLibrary/Args.hpp"
 
 namespace chm {
 	struct MemoryAllocArgs : public UncomparableArgs {

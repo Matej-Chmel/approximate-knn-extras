@@ -75,11 +75,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Benchmark.hpp" />
-    <ClInclude Include="Result.hpp" />
+    <ClInclude Include="Args.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Benchmark.cpp" />
-    <ClCompile Include="Result.cpp" />
+    <ClCompile Include="Args.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

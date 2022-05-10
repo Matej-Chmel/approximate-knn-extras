@@ -4,8 +4,8 @@ namespace chm {
 	Node::Node() : distance(0.f), id(0) {}
 	Node::Node(const float distance, const uint id) : distance(distance), id(id) {}
 
-	bool Node::operator!=(const Node& o) const {
-		return this->distance != o.distance;
+	bool Node::operator==(const Node& o) const {
+		return this->distance == o.distance;
 	}
 
 	std::vector<Node> generateNodes(const uint count, const float minDist, const float maxDist, const uint seed) {

@@ -34,7 +34,7 @@ namespace chm {
 		return this->queries.size();
 	}
 
-	VisitedArrayArgs::VisitedArrayArgs(const VisitedArrayTask& t) : VectorArgs<uint, VisitedArrayResult>(t.items), queries(t.queries) {}
+	VisitedArrayArgs::VisitedArrayArgs(const VisitedArrayTask& t) : VectorNoSetupArgs<uint, VisitedArrayResult>(t.items), queries(t.queries) {}
 
 	void throwZeroItems(const std::string& items) {
 		std::stringstream s;
